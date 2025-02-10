@@ -18,7 +18,7 @@ def collect_csv_data(sheet_name):
             continue
 
         try:
-            # CSVを読み込み
+            # CSV読み込み
             df = pd.read_csv(csv_file)
             combined_data.append(df)
             # 1行分の空白を挿入
@@ -32,12 +32,12 @@ def collect_csv_data(sheet_name):
     return combined_data
 
 # 保存するExcelファイル名
-output_excel = input("出力するExcelファイルの名前を入力してください（拡張子は省略可）: ").strip().strip('"')
+output_excel = input("出力するExcelファイルの名前を入力（拡張子は省略可）→→ ").strip().strip('"')
 if not output_excel.endswith(".xlsx"):
     output_excel += ".xlsx"
 
-# 保存先フォルダを指定
-save_dir = input("Excelファイルを保存するフォルダのパスを入力してください（未入力の場合は現在のフォルダ）: ").strip().strip('"')
+# 保存先フォルダ指定
+save_dir = input("Excelファイルを保存するフォルダのパス入力してください（未入力の場合は現在のフォルダ）→→ ").strip().strip('"')
 if not save_dir:
     save_dir = os.getcwd()
 elif not os.path.isdir(save_dir):
@@ -46,13 +46,13 @@ elif not os.path.isdir(save_dir):
 
 output_path = os.path.join(save_dir, output_excel)
 
-# シート1のデータを収集
+# シート1のデータ収集
 sheet1_data = collect_csv_data("シート1")
 
-# シート2のデータを収集
+# シート2のデータ収集
 sheet2_data = collect_csv_data("シート2")
 
-# Excelファイルに書き出し
+# Excelファイル書き出し
 with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
     if sheet1_data:
         sheet1_df = pd.concat(sheet1_data, ignore_index=True)
