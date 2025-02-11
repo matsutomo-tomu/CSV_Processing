@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+from openpyxl import load_workbook
+from openpyxl.styles import Font, Border
 
 def collect_csv_data(sheet_name):
     """シート用のCSVデータを収集する関数"""
@@ -19,7 +21,7 @@ def collect_csv_data(sheet_name):
 
         try:
             # CSV読み込み
-            df = pd.read_csv(csv_file)
+            df = pd.read_csv(csv_file, header=None)  # ヘッダーなしで読み込む
             combined_data.append(df)
             # 1行分の空白を挿入
             empty_row = pd.DataFrame([[""] * len(df.columns)], columns=df.columns)
@@ -56,9 +58,18 @@ sheet2_data = collect_csv_data("シート2")
 with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
     if sheet1_data:
         sheet1_df = pd.concat(sheet1_data, ignore_index=True)
-        sheet1_df.to_excel(writer, index=False, sheet_name="シート1")
+        sheet1_df.to_excel(writer, index=False, header=False, sheet_name="シート1")  # ヘッダーなし
     if sheet2_data:
         sheet2_df = pd.concat(sheet2_data, ignore_index=True)
-        sheet2_df.to_excel(writer, index=False, sheet_name="シート2")
+        sheet2_df.to_excel(writer, index=False, header=False, sheet_name="シート2")  # ヘッダーなし
+
+# 罫線を削除する
+wb = load_workbook(output_path)
+for sheet in wb.sheetnames:
+    ws = wb[sheet]
+    for row in ws.iter_rows():
+        for cell in row:
+            cell.border = Border()  # 罫線なしに設定
+wb.save(output_path)
 
 print(f"Excelファイルが作成されました: {output_path}")
